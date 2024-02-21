@@ -1,13 +1,37 @@
 ## Klerk Rubricator
 
-### Code challege by Klerk.
+### Тестовое задание Klerk
 
-README на русском: [README_RU.md](README_RU.md)
+### Установка
 
-#### Choosing between a nested v-for and the recursive component RubricLayer.
+Скачать проект (автоматически создаст папку "klerk-rubricator").
 
-The first interesting choice I encountered was whether to use a recursive component for representing an individual layer of the rubricator or just to use a nested v-for multiple times. I wanted the frontend to embody a reliable architecture capable of stably handling data from an API, even if additional nested levels of rubrics appear in the future. Using a nested v-for would have required establishing certain limitations for the backend: the frontend could only process up to, for example, 3 nested levels. Thus, I decided to use a recursive component that represents an individual layer of rubrics and calls itself for child rubrics. I don't see a way to implement recursion without a separate component. However, this introduces a problem in the design of the architecture: an additional component appears in the project, which is not encapsulated, and my colleagues will need to know that this is an internal component not intended for use elsewhere. Despite this, I still consider it a better choice than a nested v-for because it alleviates concerns about increasing numbers of nested levels in the future.
+```
+git clone https://github.com/gukihuman/klerk-rubricator.git
+```
 
-#### Potential possible improvements
+Перейти в папку проекта, поставить зависимости и запустить dev сервер:
 
-Instead of $fetch, one can use useFetch() - it better and more reliably controls the states of API requests. In a small code challenge, I decided not to complicate things, especially since, as I was informed, the company's main project is written in Nuxt 2, and there is no useFetch() there.
+```
+cd klerk-rubricator
+npm install
+npm run dev
+```
+
+Открыть http://localhost:3000/ в браузере.
+
+#### Заметки
+
+-   Оставил в консоли вывод полученных данных для удобства проверки задания. В работе такой вывод данных был бы удален изначально.
+-   Комментарии в коде на английском, потому что так привык. В работе, разумеется, буду соблюдать принятую в проекте стилистику.
+-   Возник вопрос по поводу вывода суммы count'ов для родительской категории "Рубрики". Напрямую об этом не сказано, но я ришил добавить. Отвлекать на такую мелочь в рамках тех. задания не стал. В работе бы спросил в процессе выполнения.
+-   Добавил API server-side обработчик, который принимает данные с основного API через обычную fetch функцию. Причина - неизвесная ошибка $fetch в продакшене на CodeSandbox, StackBlitz и Vercel (на dev сервере все в порядке).Другие API работают без проблем. Есть подозрение, что в нашей API нехватает каких-то headers и это связано с CORS. На углубление в понимание проблемы потребуется время. С другой стороны, собственный server-side обработчик на фронтенде работает нормально и можно работать с ним, если нет необходимости иметь статичный build.
+
+#### Выбор между вложенным v-for и рекурсивным компонентом RubricLayer
+
+Интересный выбор, с которым я столкнулся - использовать ли рекурсивный компонент для представления индивидуального слоя рубрик или просто использовать вложенный v-for несколько раз. Использование вложенного v-for потребовало бы установления некоторых ограничений для бэкенда: фронтенд может обрабатывать только до, например, 3-ех вложенных уровней, а хотелось бы, чтобы фронтенд представлял собой надежную архитектуру, способную стабильно обрабатывать данные с API, даже если в будущем появятся дополнительные вложенные уровни рубрик. Решил использовать рекурсивный компонент RubricLayer, который представляет индивидуальный слой рубрик и вызывает сам себя для дочерних рубрик. Можно было бы объединить с основным компонентом Rubricator, но это привело бы к нагромождению кода: пришлось бы добавлять динамический параметр isRoot и на него привязывать различия в template. Конечно появляется дополнительный компонент, который не инкапсулирован, но документация должна решить эту проблему. Конечно, в идеале бы не создавать лишних компонентов, и я бы предложил руководителю сделать один компонент с чуть более сложным внутренним кодом, если так удобнее.
+
+#### Потенциальные возможные улучшения
+
+-   Можно сделать анимацию для суммы выбранных рубрик, когда они меняются: сам счетчик растет или уменьшается. Конечно, она не должна быть долгой, не больше 100 мс.
+-   Вместо $fetch в Nuxt 3 можно использовать useFetch() - лучше и надежнее контролирует состояния API запросов. В небольшом тех. задании решил не усложнять, тем более, как мне сообщили, основной проект компании написан на Nuxt 2.
