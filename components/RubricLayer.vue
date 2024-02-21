@@ -1,16 +1,16 @@
 <template>
-    <div>
-        <div v-for="(rubric, i) in rubrics" :key="i">
+    <ul>
+        <li v-for="(rubric, i) in rubrics" :key="i">
             <div class="flex p-[1px]">
                 <!-- fold / unfold arrow-like button -->
-                <div
+                <button
                     v-if="rubric.children && rubric.children.length"
                     @click="isOpen[i] = !isOpen[i]"
                     class="w-6 h-6 mr-2 text-slate-600 cursor-pointer rounded-md hover:bg-slate-400 transition ease-in-out duration-75"
                 >
                     <SvgChevronRight v-show="!isOpen[i]" />
                     <SvgChevronDown v-show="isOpen[i]" />
-                </div>
+                </button>
                 <div v-else class="w-6 h-6 mr-2"></div>
 
                 <!-- title and counts line -->
@@ -22,7 +22,7 @@
                         {{ rubric.title }}
                     </p>
                     <div class="flex items-center">
-                        <p>{{ formatCounts(rubric) }}</p>
+                        <p>{{ `${rubric.count} (${rubric.countSum})` }}</p>
                         <input
                             type="checkbox"
                             @click="handleCheckClick($event, i)"
@@ -33,18 +33,21 @@
             </div>
 
             <RubricLayer
-                v-if="rubric.children && rubric.children.length && isOpen[i]"
+                v-show="rubric.children && isOpen[i]"
                 :rubrics="rubric.children"
+                class="ml-6"
             />
-        </div>
-    </div>
+        </li>
+    </ul>
 </template>
 <script setup lang="ts">
 import type { Rubric } from "./Rubricator.vue"
+
 const props = defineProps({
     rubrics: { type: Object as PropType<Rubric[]>, default: [] },
 })
 const isOpen: Ref<boolean[]> = ref([])
+
 onMounted(() => {
     for (let i = 0; i < props.rubrics.length; i++) {
         isOpen.value.push(false)
@@ -52,10 +55,6 @@ onMounted(() => {
 })
 const openLink = (url: string) => {
     window.open("https://www.klerk.ru" + url, "_blank")
-}
-const formatCounts = (rubric: Rubric): string => {
-    if (rubric.countSum) return `${rubric.count} (${rubric.countSum})`
-    else return `${rubric.count}`
 }
 const handleCheckClick = (event: MouseEvent, i: number) => {
     const target = event.target as HTMLInputElement
