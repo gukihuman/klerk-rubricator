@@ -28,12 +28,11 @@
                         <p>{{ `(${resolveRootCountSum})` }}</p>
                     </div>
                     <RubricLayer
-                        v-if="allowEmpty"
+                        v-if="allowEmpty && isOpen"
                         :rubrics="rootRubricsAllowEmpty"
                     />
                     <RubricLayer
-                        v-if="!allowEmpty"
-                        v-show="isOpen"
+                        v-if="!allowEmpty && isOpen"
                         :rubrics="rootRubrics"
                     />
                 </div>
